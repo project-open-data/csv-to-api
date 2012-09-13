@@ -92,13 +92,19 @@ class Instant_API {
 		return $url_parts['extension'];
 		
 	}
-
+	
+	/**
+	 * Convert reserved XML characters into their entitity equivalents.
+	 */
 	function xml_entities( $string ) {
 
     	return str_replace( array("&", "<", ">", "\"", "'"), array("&amp;", "&lt;", "&gt;", "&quot;", "&apos;"), $string );
 
      }
-	
+     
+	/**
+	 * Turn CSV into a PHP array.
+	 */
 	function parse_csv( $csv ) {
 	
 		$lines = explode( "\n", $csv );
@@ -121,6 +127,9 @@ class Instant_API {
 		
 	}	
 	
+	/**
+	 * Turn a PHP array into a PHP object.
+	 */
 	function array_to_object( $array ) {
 		
 		$output = new stdClass();
@@ -130,13 +139,19 @@ class Instant_API {
 		return $output;
 		
 	}
-	
+
+	/**
+	 * Turn a PHP object into JSON text.
+	 */
 	function object_to_json( $data ) {
 		
 		return json_encode( $data );
 		
 	}
-	
+
+	/**
+	 * Turn a PHP object into XML text.
+	 */
 	function object_to_xml( $array, $xml, $tidy = true ) {
 
 		if ( $xml == null )
@@ -176,16 +191,19 @@ class Instant_API {
 		return $xml;
 		
 	}
-	
+
+	/**
+	 * Turn a PHP object into an HTML table.
+	 */
 	function object_to_html( $data ) {
 		
-		$output = "<table>\n";
+		$output = "<table>\n<thead>\n";
 		$output .= "<tr>";
 
 		foreach ( array_keys( get_object_vars( reset( $data ) ) ) as $header ) 
 			$output .= "\t<th>$header</th>";
 			
-		$output .= "</tr>";
+		$output .= "</tr>\n</thead>\n<tbody>";
 		
 		foreach ( $data as $row ) {
 			
@@ -198,7 +216,7 @@ class Instant_API {
 			
 		}
 		
-		$output .= '</table>';
+		$output .= "</tbody>\n</table>";
 		
 		return $output;
 		
@@ -213,7 +231,10 @@ class Instant_API {
 		return $dom->saveXML();
 		
 	}	
-	
+
+	/**
+	 * Send to the browser the MIME type that defines this content (JSON, XML, or HTML).
+	 */
 	function header( $extension = null ) {
 	
 		if ( $extension == null )
@@ -253,6 +274,9 @@ class Instant_API {
 
 	}
 	
+	/**
+	 * Prevent malicious callbacks from being used in JSONP requests.
+	 */
 	function jsonp_callback_filter( $callback ) {
 		
 		//http://stackoverflow.com/a/10900911/1082542
