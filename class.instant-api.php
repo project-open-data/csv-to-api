@@ -12,7 +12,7 @@ class Instant_API {
 	public $data;
 
 	/**
-	 * Fetch the requested file and turn it into a PHP array.
+	 * Use the query (often the requested URL) to define some settings.
 	 */
 	function parse_query( $query = null ) {
 		
