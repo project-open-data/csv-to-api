@@ -11,14 +11,23 @@ class Instant_API {
 	public $sort_dir = null;
 	public $data;
 
+	/**
+	 * Fetch the requested file and turn it into a PHP array.
+	 */
 	function parse_query( $query = null ) {
 		
-		if ( is_string( $query ) )
+		// If a query has been passed to the function, turn it into an array.
+		if ( is_string( $query ) ) {
 			$query = wp_parse_args( $query );
-			
-		if ( $query == null )
-			$query = $_GET;
+		}
 		
+		// If a query has not been passed to this function, just use the array of variables that
+		// were passed in the URL.
+		if (is_null($query)) {
+			$query = $_GET;
+		}
+		
+		// Define a series of configuration variables based on what was requested in the query.
 		$this->source = isset( $query['source'] ) ? esc_url( $query['source'] ) : null;
 		$this->source_format = isset( $query['source_format'] ) ? $query['source_format'] : $this->get_extension( $this->url );
 		$this->format = isset( $query['format'] ) ? $query['format'] : 'json';
@@ -29,51 +38,78 @@ class Instant_API {
 		return get_object_vars( $this );
 		
 	}
-
+	
+	/**
+	 * Fetch the requested file and turn it into a PHP array.
+	 */
 	function parse() {
-			
-		$key = 'IA_' . md5( $this->source );
-		if ( $data = get_transient( $key ) )
-			return $data;
-
-		$parser = 'parse_' . $this->source_format;
-		if ( !method_exists( $this, $parser ) )
-			wp_die( 'Format not supported' );		
 		
+		// Attempt to retrieve the data from WordPress' cache via its Transients API
+		// http://codex.wordpress.org/Transients_API
+		$key = 'IA_' . md5( $this->source );
+		if ( $data = get_transient( $key ) ) {
+			return $data;
+		}
+		
+		// Create an instance of the parser for the requested file format (e.g. CSV)
+		$parser = 'parse_' . $this->source_format;
+		if ( !method_exists( $this, $parser ) ) {
+			wp_die( 'Format not supported' );
+		}
+		
+		// Retrieve the requested source material via HTTP GET.
 		$this->data = wp_remote_get( $this->source );
 
-		if ( is_wp_error( $this->data ) )
-			return wp_die( 'Bad data source' );		
-			
+		if ( is_wp_error( $this->data ) ) {
+			return wp_die( 'Bad data source' );
+		}
+		
+		// Save the contents of the requested file.
 		$this->data = wp_remote_retrieve_body( $this->data );
-
+		
+		// Turn the raw file data (e.g. CSV) into a PHP array.
 		$this->data = $this->$parser( $this->data );
-
+		
+		// Save the data to WordPress' cache via its Transients API.
 		set_transient( $key, $this->data, $this->ttl );
 		
 		return $this->query( $this->data );
 		
 	}
-	
+
+	/**
+	 * Return to the client the requested data in the requested format (e.g. JSON).
+	 */
 	function output() {
 		
 		$function = 'object_to_' . $this->format;
 
 		if ( !method_exists( $this, $function) )
+		{
 			return false;
-
+		}
+		
+		// Send to the browser a header specifying the proper MIME type for the requested format.
 		$this->header( $this->format );
 		$output = $this->$function( $this->data );
-
+		
+		// Prepare a JSONP callback.
 		$callback = $this->jsonp_callback_filter( $this->callback );
 		
-		if ( $this->format == 'json' && $this->callback )
+		// Only send back JSONP if that's appropriate for the request.
+		if ( $this->format == 'json' && $this->callback ) {
 			return "{$this->callback}($output);";
+		}
 		
+		// If not JSONP, send back the data.
 		return $output;
 
 	}
-
+	
+	/**
+	 * Create a key name, based on a CSV column header name, that is safe to embed in JavaScript
+	 * or XML.
+	 */
 	function sanitize_key( $key ) {
 		
 		$key = sanitize_title( $key );
@@ -82,10 +118,14 @@ class Instant_API {
 		
 	}
 	
+	/**
+	 * Determine the file type of the requested file based on its extension.
+	 */
 	function get_extension( $source = null ) {
 
-		if ( $source == null )
+		if ( $source == null ) {
 			$source = $this->source;
+		}
 			
 		$url_parts = parse_url( $source );
 		$url_parts = pathinfo( $url_parts['path'] ); 
@@ -114,8 +154,9 @@ class Instant_API {
 		
 			$row = array();
 		
-			foreach ( str_getcsv( $line ) as $key => $field )
+			foreach ( str_getcsv( $line ) as $key => $field ) {
 				$row[ $this->sanitize_key( $headers[ $key ] ) ] = $field;
+			}
 		
 			$row = array_filter( $row );
 			$row = $this->array_to_object( $row );
@@ -133,8 +174,9 @@ class Instant_API {
 	function array_to_object( $array ) {
 		
 		$output = new stdClass();
-		foreach ( $array as $key => $value ) 
+		foreach ( $array as $key => $value ) {
 			$output->$key = $value;
+		}
 
 		return $output;
 		
@@ -154,8 +196,9 @@ class Instant_API {
 	 */
 	function object_to_xml( $array, $xml, $tidy = true ) {
 
-		if ( $xml == null )
+		if ( $xml == null ) {
 			$xml = new SimpleXMLElement( '<records></records>' );
+		}
 
 		//array of keys that will be treated as attributes, not children
 		$attributes = array( 'id' );
@@ -165,28 +208,32 @@ class Instant_API {
 
 			//if this is a numbered array,
 			//grab the parent node to determine the node name
-			if ( is_numeric( $key ) )
+			if ( is_numeric( $key ) ) {
 				$key = 'record';
+			}
 		
 			//if this is an attribute, treat as an attribute
 			if ( in_array( $key, $attributes ) ) {
 				$xml->addAttribute( $key, $value );
+			}
 		
-				//if this value is an object or array, add a child node and treat recursively
-			} else if ( is_object( $value ) || is_array( $value ) ) {
+			//if this value is an object or array, add a child node and treat recursively
+			elseif ( is_object( $value ) || is_array( $value ) ) {
 					$child = $xml->addChild( $key );
 					$child = $this->object_to_xml( $value, $child, false );
-		
-				//simple key/value child pair
-			} else {
+			}
+			
+			//simple key/value child pair
+			else {
 					$value = $this->xml_entities( $value );
 					$xml->addChild( $key, $value );
 			}
 		
 		}
 		
-		if ( $tidy )
+		if ( $tidy ) {
 			$xml = $this->tidy_xml( $xml );
+		}
 
 		return $xml;
 		
@@ -200,8 +247,9 @@ class Instant_API {
 		$output = "<table>\n<thead>\n";
 		$output .= "<tr>";
 
-		foreach ( array_keys( get_object_vars( reset( $data ) ) ) as $header ) 
+		foreach ( array_keys( get_object_vars( reset( $data ) ) ) as $header ) {
 			$output .= "\t<th>$header</th>";
+		}
 			
 		$output .= "</tr>\n</thead>\n<tbody>";
 		
@@ -209,8 +257,9 @@ class Instant_API {
 			
 			$output .= "<tr>\n";
 			
-			foreach ( $row as $key => $value )				
+			foreach ( $row as $key => $value ) {			
 				$output .= "\t<td>$value</td>\n";
+			}
 			
 			$output .= "</tr>\n";
 			
@@ -221,7 +270,10 @@ class Instant_API {
 		return $output;
 		
 	}
-	
+
+	/**
+	 * Pass XML through PHP's DOMDocument class, which will tidy it up.
+	 */
 	function tidy_xml( $xml ) {
 
 		$dom = new DOMDocument();
@@ -237,21 +289,23 @@ class Instant_API {
 	 */
 	function header( $extension = null ) {
 	
-		if ( $extension == null )
+		if ( $extension == null ) {
 			$extension = $this->extension;
+		}
 		
 		$mimes = $this->get_mimes();
 
-		if ( !isset( $mimes[ $extension ] ) || headers_sent() )
+		if ( !isset( $mimes[ $extension ] ) || headers_sent() ) {
 			return;
+		}
 
 		header( 'Content-Type: ' . $mimes[ $extension ] );
 		
 	}
 	
 	/**
-	 * Return mime types filtered
-	 * This way we do not allow additional mimetypes elsewhere
+	 * Return MIME types, filtered.
+	 * This way we do not allow additional MIME types elsewhere.
 	 */
 	function get_mimes() {
 
@@ -279,34 +333,46 @@ class Instant_API {
 	 */
 	function jsonp_callback_filter( $callback ) {
 		
-		//http://stackoverflow.com/a/10900911/1082542
-		if ( preg_match( '/[^0-9a-zA-Z\$_]|^(abstract|boolean|break|byte|case|catch|char|class|const|continue|debugger|default|delete|do|double|else|enum|export|extends|false|final|finally|float|for|function|goto|if|implements|import|in|instanceof|int|interface|long|native|new|null|package|private|protected|public|return|short|static|super|switch|synchronized|this|throw|throws|transient|true|try|typeof|var|volatile|void|while|with|NaN|Infinity|undefined)$/', $callback) )
+		// As per <http://stackoverflow.com/a/10900911/1082542>.
+		if ( preg_match( '/[^0-9a-zA-Z\$_]|^(abstract|boolean|break|byte|case|catch|char|class|const|continue|debugger|default|delete|do|double|else|enum|export|extends|false|final|finally|float|for|function|goto|if|implements|import|in|instanceof|int|interface|long|native|new|null|package|private|protected|public|return|short|static|super|switch|synchronized|this|throw|throws|transient|true|try|typeof|var|volatile|void|while|with|NaN|Infinity|undefined)$/', $callback) ) {
 			return false;
+		}
 
 		return $callback;
 				
 	}
-	
+
+	/**
+	 * 
+	 */
 	function query( $data, $query = null ) {
 		
-		if ( $query == null )
+		if ( $query == null ) {
 			$query = $_GET;
-				
+		}
+		
+		// Fill in any defaults that are missing.
 		$query = shortcode_atts( $this->get_query_vars( $data ), $query );
 		
+		// Eliminate any value in $query that equal false.
 		$query = array_filter( $query );
 		
 		$data = wp_list_filter( $data, $query );
 		
-		if ( $this->sort == null )
+		if ( $this->sort == null ) {
 			return $data;
-			
+		}
+
+		// Optionally sort the object.
 		$data = usort( $data, array( &$this, 'object_sort' ) );
 		
 		return $data;
 		
 	}
-	
+
+	/**
+	 * 
+	 */
 	function get_query_vars( $data ) {
 	
 		$vars = array();
@@ -314,8 +380,9 @@ class Instant_API {
 
 			foreach ( $row as $key=>$value ) {
 				
-				if ( !array_key_exists( $key, $vars ) )
+				if ( !array_key_exists( $key, $vars ) ) {
 					$vars[ $key ] = null;
+				}
 				
 			}
 			
@@ -325,12 +392,16 @@ class Instant_API {
 		
 	}
 	
+	/**
+	 * Sorts an object, in either ascending or descending order.
+	 */
 	function object_sort( $a, $b ) {
 	
 		$sorter = $this->sort;
 		
-		if ( $sorter == null )
+		if ( $sorter == null ) {
 			return 0;
+		}
 			
 		$sorter = ( $sorter == 'DESC' ) ? SORT_ASC : SORT_DESC;
 		
