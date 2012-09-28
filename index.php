@@ -6,7 +6,7 @@ $parse_uri = explode( 'wp-content', $_SERVER['SCRIPT_FILENAME'] );
 require_once($parse_uri[0] . 'wp-load.php');
 
 # Include Instant API's function library.
-require_once('class.instant-api.php');
+require_once('class.csv-to-api.php');
 
 # Create a new instance of the Instant API class.
 $ia = new Instant_API();
