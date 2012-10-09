@@ -207,30 +207,29 @@ class CSV_To_API {
       $xml = new SimpleXMLElement( '<records></records>' );
     }
 
-    //array of keys that will be treated as attributes, not children
+    // Array of keys that will be treated as attributes, not children.
     $attributes = array( 'id' );
 
-    //recursively loop through each item
+    // Recursively loop through each item.
     foreach ( $array as $key => $value ) {
 
-      //if this is a numbered array,
-      //grab the parent node to determine the node name
+      // If this is a numbered array, grab the parent node to determine the node name.
       if ( is_numeric( $key ) ) {
         $key = 'record';
       }
 
-      //if this is an attribute, treat as an attribute
+      // If this is an attribute, treat as an attribute.
       if ( in_array( $key, $attributes ) ) {
         $xml->addAttribute( $key, $value );
       }
 
-      //if this value is an object or array, add a child node and treat recursively
+      // If this value is an object or array, add a child node and treat recursively.
       elseif ( is_object( $value ) || is_array( $value ) ) {
         $child = $xml->addChild( $key );
         $child = $this->object_to_xml( $value, $child, false );
       }
 
-      //simple key/value child pair
+      // Simple key/value child pair.
       else {
         $value = $this->xml_entities( $value );
         $xml->addChild( $key, $value );
@@ -408,7 +407,7 @@ class CSV_To_API {
       return 0;
     }
 
-    $sorter = ( $sorter == 'DESC' ) ? SORT_ASC : SORT_DESC;
+    $sorter = ( $sorter == 'desc' ) ? SORT_ASC : SORT_DESC;
 
     return $a->$sorter == $b->$sorter ? 0 : ( $a->$sorter > $b->$sorter ) ? 1 : -1;
 
@@ -448,11 +447,10 @@ class CSV_To_API {
 
     $this->cache[$key] = $value;
 
-
   }
 
 
-  // All functions below this point take from WordPress
+  // All functions below this point taken from WordPress
 
   /**
    * Merge user defined arguments into defaults array.
