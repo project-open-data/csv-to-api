@@ -46,23 +46,23 @@ Example Usage
 
 ### Get results as XML
 
-http://example.com/csv-to-api/index.php?source=https://explore.data.gov/download/7tag-iwnu/CSV&source_format=csv&format=xml
+http://example.gov/csv-to-api/index.php?source=https://explore.data.gov/download/7tag-iwnu/CSV&source_format=csv&format=xml
 
 ### Get Results as JSONP
 
-http://example.com/csv-to-api/index.php?source=https://explore.data.gov/download/7tag-iwnu/CSV&source_format=csv&format=json&callback=parse_results
+http://example.gov/csv-to-api/index.php?source=https://explore.data.gov/download/7tag-iwnu/CSV&source_format=csv&format=json&callback=parse_results
 
 ### Get results as HTML
 
-http://example.com/csv-to-api/index.php?source=https://explore.data.gov/download/7tag-iwnu/CSV&source_format=csv&format=html
+http://example.gov/csv-to-api/index.php?source=https://explore.data.gov/download/7tag-iwnu/CSV&source_format=csv&format=html
 
 ### Sort by a field
 
-http://example.com/csv-to-api/index.php?source=https://explore.data.gov/download/7tag-iwnu/CSV&source_format=csv&sort=Region
+http://example.gov/csv-to-api/index.php?source=https://explore.data.gov/download/7tag-iwnu/CSV&source_format=csv&sort=Region
 
 ### Filter by a field
 
-http://example.com/csv-to-api/index.php?source=https://explore.data.gov/download/7tag-iwnu/CSV&source_format=csv&Depth=5.00
+http://example.gov/csv-to-api/index.php?source=https://explore.data.gov/download/7tag-iwnu/CSV&source_format=csv&Depth=5.00
 
 License
 -------
