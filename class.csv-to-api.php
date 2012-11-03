@@ -345,7 +345,8 @@ class CSV_To_API {
 
 
   /**
-   *
+   * Parse the query parameters passed in the URL and use them to populate a complete list of
+   * settings.
    */
   function query( $data, $query = null ) {
 
@@ -374,7 +375,7 @@ class CSV_To_API {
 
 
   /**
-   *
+   * Uses a PHP array to generate a list of all column names.
    */
   function get_query_vars( $data ) {
 
