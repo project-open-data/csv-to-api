@@ -26,9 +26,8 @@ Requirements
 Usage
 -----
 
-1. Download *CSV to API*.
-2. Copy `class.csv-to-api.inc.php` and `index.php` to your web server.
-3. Load a CSV file via the URL `index.php`, using the arguments below.
+1. Copy `class.csv-to-api.inc.php` and `index.php` to your web server.
+2. Load a CSV file via the URL `index.php`, using the arguments below.
 
 Arguments
 ---------
