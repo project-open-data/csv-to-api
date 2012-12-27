@@ -13,9 +13,9 @@ How This Solves It
 
 *CSV to API* acts as a filter, sitting between CSV and the browser, allowing users to interact with that CSV as if it was a native API. The column names (that is, the cells that comprise the first row in the file) function as the key names.
 
-Note that this can be run on any server to create an API for any CSV file on any server. There is no need to install *CSV to API* for each unique CSV file or even each unique server -- an organization can link to each and every one of their CSV files via *CSV to API*, or an individual could even use their own installation of *CSV to API* to access arbitrary remote CSV files as if they were APIs.
+Note that this can be run on any server to create an API for any CSV file on any server. There is no need to install *CSV to API* for each unique CSV file or even each unique server—an organization can link to each and every one of their CSV files via *CSV to API*, or an individual could even use their own installation of *CSV to API* to access arbitrary remote CSV files as if they were APIs.
 
-When Alternative PHP Cache (APC) is installed, parsed data is stored within APC, which accellerates substantially its functionality.
+When Alternative PHP Cache (APC) is installed, parsed data is stored within APC, which accellerates  its functionality substantially. While APC is not required, it is recommended highly.
 
 Requirements
 ------------
