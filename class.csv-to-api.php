@@ -47,7 +47,6 @@ class CSV_To_API {
 
     // Create an instance of the parser for the requested file format (e.g. CSV)
     $parser = 'parse_' . $this->source_format;
-
     if ( !method_exists( $this, $parser ) ) {
       header( '400 Bad Request' );
       die( 'Format not supported' );
@@ -157,17 +156,8 @@ class CSV_To_API {
    * Turn CSV into a PHP array.
    */
   function parse_csv( $csv ) {
-    if ( substr_count($csv, "\n" ) > substr_count($csv, "\r" ) )
-    {
-      $newline = "\n";
-    }
-    else
-    {
-      $newline = "\r";
-    }
-    
-    $lines = explode( $newline, $csv );
-	
+
+    $lines = explode( "\n", $csv );
     $headers = str_getcsv( array_shift( $lines ) );
     $data = array();
     foreach ( $lines as $line ) {
