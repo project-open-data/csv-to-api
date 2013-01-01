@@ -58,7 +58,13 @@ class CSV_To_API {
     if ( !$this->data ) {
 
       // Retrieve the requested source material via HTTP GET.
-      $this->data = file_get_contents( $this->source );
+      if (ini_get('allow_url_fopen') == true) {
+        $this->data = file_get_contents( $this->source );
+      }
+      else {
+        $this->data = $this->curl_get( $this->source );
+      }
+
 
       if ( !$this->data ) {
         header( '502 Bad Gateway' );
@@ -448,6 +454,20 @@ class CSV_To_API {
 
     $this->cache[$key] = $value;
 
+  }
+  
+  function curl_get( $url ) {
+    if ( !isset($url) ) {
+      return false;
+    }
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1);
+    curl_setopt($ch, CURLOPT_TIMEOUT_MS, 1200);
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+    $result = curl_exec($ch);
+    curl_close($ch);
+    return $result;
   }
 
 
