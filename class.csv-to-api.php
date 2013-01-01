@@ -47,6 +47,7 @@ class CSV_To_API {
 
     // Create an instance of the parser for the requested file format (e.g. CSV)
     $parser = 'parse_' . $this->source_format;
+
     if ( !method_exists( $this, $parser ) ) {
       header( '400 Bad Request' );
       die( 'Format not supported' );
@@ -156,8 +157,25 @@ class CSV_To_API {
    * Turn CSV into a PHP array.
    */
   function parse_csv( $csv ) {
-
-    $lines = explode( "\n", $csv );
+    
+    /*
+     * Determine which character to use to break up lines based on which one is the
+     * most common. If they're both just as common, then they're Windows newlines.
+     */
+    $newlines_unix = substr_count($csv, "\n" );
+    $newlines_mac = substr_count($csv, "\r" );
+    if ( $newlines_unix > $newlines_mac ) {
+      $newline = "\n";
+    }
+    elseif ($newlines_unix == $newlines_mac) {
+      $newline = "\r\n";
+	}
+    else {
+      $newline = "\r";
+    }
+    
+    $lines = explode( $newline, $csv );
+	
     $headers = str_getcsv( array_shift( $lines ) );
     $data = array();
     foreach ( $lines as $line ) {
