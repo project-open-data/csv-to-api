@@ -29,7 +29,7 @@ class CSV_To_API {
 
     // Define a series of configuration variables based on what was requested in the query.
     $this->source = isset( $query['source'] ) ? $this->esc_url( $query['source'] ) : null;
-    $this->source_format = isset( $query['source_format'] ) ? $query['source_format'] : $this->get_extension( $this->url );
+    $this->source_format = isset( $query['source_format'] ) ? $query['source_format'] : $this->get_extension( $this->source );
     $this->format = isset( $query['format'] ) ? $query['format'] : 'json';
     $this->callback = isset( $query['callback'] ) ? $this->jsonp_callback_filter( $query['callback'] ) : false;
     $this->sort = isset( $query['sort'] ) ? $query['sort'] : null;
@@ -138,7 +138,8 @@ class CSV_To_API {
 
     $url_parts = parse_url( $source );
     $url_parts = pathinfo( $url_parts['path'] );
-    return $url_parts['extension'];
+    
+    return isset( $url_parts['extension'] ) ? $url_parts['extension'] : '';
 
   }
 
