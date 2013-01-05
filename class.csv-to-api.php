@@ -173,16 +173,17 @@ class CSV_To_API {
     else {
       $newline = "\r";
     }
-    
+
     $lines = explode( $newline, $csv );
-	
-    $headers = str_getcsv( array_shift( $lines ) );
+    $lines = $this->parse_lines( $lines );
+    
+    $headers = array_shift( $lines );
     $data = array();
     foreach ( $lines as $line ) {
 
       $row = array();
 
-      foreach ( str_getcsv( $line ) as $key => $field ) {
+      foreach ( $line as $key => $field ) {
         $row[ $this->sanitize_key( $headers[ $key ] ) ] = $field;
       }
 
@@ -196,6 +197,40 @@ class CSV_To_API {
 
   }
 
+	/**
+	 * Parse CSV into array of arrays
+	 * Wrapper function to allow pre 5.3 compatability
+	 * @param array the CSV data as an array of lines
+	 * @return array array of preset objects
+	 */
+  function parse_lines( $lines ) {
+
+    //php 5.3+
+		if ( function_exists( 'str_getcsv' ) ) {
+
+			foreach ( $lines as &$line ) 
+				$line = str_getcsv( $line );
+
+		//php 5.2
+		// fgetcsv needs a file handle, 
+		// so write the string to a temp file before parsing	
+		} else {
+
+			$fh = tmpfile();
+			fwrite( $fh, implode( "\n", $lines ) );
+			fseek( $fh, 0 );
+			$lines = array();
+
+			while( $line = fgetcsv( $fh ) )
+				$lines[] = $line;
+
+			fclose( $fh );
+
+		}
+		
+		return $lines;
+    
+  }
 
   /**
    * Turn a PHP array into a PHP object.
@@ -225,7 +260,7 @@ class CSV_To_API {
   /**
    * Turn a PHP object into XML text.
    */
-  function object_to_xml( $array, $xml, $tidy = true ) {
+  function object_to_xml( $array, $xml = null, $tidy = true ) {
 
     if ( $xml == null ) {
       $xml = new SimpleXMLElement( '<records></records>' );
@@ -444,12 +479,12 @@ class CSV_To_API {
    */
   function get_cache( $key ) {
 
-    if ( !extension_loaded('apc') || (ini_get('apc.enabled') != 1) ) {
+    if ( !extension_loaded('apc') || (ini_get('apc.enabled') != 1) ) { 
       if ( isset( $this->cache[ $key ] ) ) {
         return $this->cache[ $key ];
       }
     }
-    else {
+    else { 
       return apc_fetch( $key );
     }
 
