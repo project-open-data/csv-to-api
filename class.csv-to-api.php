@@ -157,7 +157,7 @@ class CSV_To_API {
    * Turn CSV into a PHP array.
    */
   function parse_csv( $csv ) {
-    
+
     /*
      * Determine which character to use to break up lines based on which one is the
      * most common. If they're both just as common, then they're Windows newlines.
@@ -169,14 +169,14 @@ class CSV_To_API {
     }
     elseif ($newlines_unix == $newlines_mac) {
       $newline = "\r\n";
-	}
+    }
     else {
       $newline = "\r";
     }
 
     $lines = explode( $newline, $csv );
     $lines = $this->parse_lines( $lines );
-    
+
     $headers = array_shift( $lines );
     $data = array();
     foreach ( $lines as $line ) {
@@ -197,39 +197,39 @@ class CSV_To_API {
 
   }
 
-	/**
-	 * Parse CSV into array of arrays
-	 * Wrapper function to allow pre 5.3 compatability
-	 * @param array the CSV data as an array of lines
-	 * @return array array of preset objects
-	 */
+  /**
+   * Parse CSV into array of arrays
+   * Wrapper function to allow pre 5.3 compatability
+   * @param array the CSV data as an array of lines
+   * @return array array of preset objects
+   */
   function parse_lines( $lines ) {
 
     //php 5.3+
-		if ( function_exists( 'str_getcsv' ) ) {
+    if ( function_exists( 'str_getcsv' ) ) {
 
-			foreach ( $lines as &$line ) 
-				$line = str_getcsv( $line );
+      foreach ( $lines as &$line )
+        $line = str_getcsv( $line );
 
-		//php 5.2
-		// fgetcsv needs a file handle, 
-		// so write the string to a temp file before parsing	
-		} else {
+      //php 5.2
+      // fgetcsv needs a file handle,
+      // so write the string to a temp file before parsing
+    } else {
 
-			$fh = tmpfile();
-			fwrite( $fh, implode( "\n", $lines ) );
-			fseek( $fh, 0 );
-			$lines = array();
+      $fh = tmpfile();
+      fwrite( $fh, implode( "\n", $lines ) );
+      fseek( $fh, 0 );
+      $lines = array();
 
-			while( $line = fgetcsv( $fh ) )
-				$lines[] = $line;
+      while( $line = fgetcsv( $fh ) )
+        $lines[] = $line;
 
-			fclose( $fh );
+      fclose( $fh );
 
-		}
-		
-		return $lines;
-    
+    }
+
+    return $lines;
+
   }
 
   /**
@@ -479,12 +479,12 @@ class CSV_To_API {
    */
   function get_cache( $key ) {
 
-    if ( !extension_loaded('apc') || (ini_get('apc.enabled') != 1) ) { 
+    if ( !extension_loaded('apc') || (ini_get('apc.enabled') != 1) ) {
       if ( isset( $this->cache[ $key ] ) ) {
         return $this->cache[ $key ];
       }
     }
-    else { 
+    else {
       return apc_fetch( $key );
     }
 
@@ -508,7 +508,7 @@ class CSV_To_API {
     $this->cache[$key] = $value;
 
   }
-  
+
   function curl_get( $url ) {
     if ( !isset($url) ) {
       return false;
@@ -517,7 +517,7 @@ class CSV_To_API {
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1);
     curl_setopt($ch, CURLOPT_TIMEOUT_MS, 1200);
     curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     $result = curl_exec($ch);
     curl_close($ch);
     return $result;
