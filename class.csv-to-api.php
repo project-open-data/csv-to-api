@@ -152,29 +152,25 @@ class CSV_To_API {
 
   }
 
-
+  /** 
+   * Normalize all line endings to Unix line endings
+   * @param string the mixed-ending string to normalized
+   * @return string the normalized string
+   */
+  function normalize_line_endings( $string ) {
+    $string = str_replace( "\r\n", "\n", $string );
+    $string = str_replace( "\r", "\n", $string );
+    return $string;    
+  }
+  
   /**
    * Turn CSV into a PHP array.
    */
   function parse_csv( $csv ) {
 
-    /*
-     * Determine which character to use to break up lines based on which one is the
-     * most common. If they're both just as common, then they're Windows newlines.
-     */
-    $newlines_unix = substr_count($csv, "\n" );
-    $newlines_mac = substr_count($csv, "\r" );
-    if ( $newlines_unix > $newlines_mac ) {
-      $newline = "\n";
-    }
-    elseif ($newlines_unix == $newlines_mac) {
-      $newline = "\r\n";
-    }
-    else {
-      $newline = "\r";
-    }
+    $csv = $this->normalize_line_endings( $csv );
 
-    $lines = explode( $newline, $csv );
+    $lines = explode( "\n", $csv );
     $lines = $this->parse_lines( $lines );
 
     $headers = array_shift( $lines );
