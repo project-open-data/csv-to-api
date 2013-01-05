@@ -541,6 +541,7 @@ class CSV_To_API {
     curl_setopt($ch, CURLOPT_TIMEOUT_MS, 1200);
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     $result = curl_exec($ch);
     curl_close($ch);
     return $result;
