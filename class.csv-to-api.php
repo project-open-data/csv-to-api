@@ -79,8 +79,10 @@ class CSV_To_API {
       $this->set_cache( $key, $this->data, $this->ttl );
 
     }
-
-    return $this->query( $this->data );
+    
+    $this->data = $this->query( $this->data );
+    
+    return $this->data;
 
   }
 
