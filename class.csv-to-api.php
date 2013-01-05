@@ -33,7 +33,7 @@ class CSV_To_API {
     $this->format = isset( $query['format'] ) ? $query['format'] : 'json';
     $this->callback = isset( $query['callback'] ) ? $this->jsonp_callback_filter( $query['callback'] ) : false;
     $this->sort = isset( $query['sort'] ) ? $query['sort'] : null;
-    $this->sort_dir = isset( $query['sort_dir'] ) ? $query['sort_dir'] : null;
+    $this->sort_dir = isset( $query['sort_dir'] ) ? $query['sort_dir'] : "desc";
 
     return get_object_vars( $this );
 
@@ -425,7 +425,8 @@ class CSV_To_API {
     }
 
     // Optionally sort the object.
-    $data = usort( $data, array( &$this, 'object_sort' ) );
+    if ( $this->sort != null )
+      usort( $data, array( &$this, 'object_sort' ) );
 
     return $data;
 
@@ -457,19 +458,42 @@ class CSV_To_API {
 
   /**
    * Sorts an object, in either ascending or descending order.
+   * @param object $a the first object
+   * @param object $b the second object
+   * @return int 0, 1, or -1 the ranking of $a to $b
+   * 
+   * The comparison function must return an integer less than, equal to, or greater than zero 
+   * if the first argument is considered to be respectively less than, equal to, or greater than the second.
+   * see http://php.net/manual/en/function.usort.php for more information
    */
   function object_sort( $a, $b ) {
 
     $sorter = $this->sort;
 
-    if ( $sorter == null ) {
+    //no sort by field supplied or invalid sort field, tell usort not to do anything
+    if ( $sorter == null || !isset( $a->$sorter ) || !isset( $b->$sorter ) ) {
       return 0;
     }
-
-    $sorter = ( $sorter == 'desc' ) ? SORT_ASC : SORT_DESC;
-
-    return $a->$sorter == $b->$sorter ? 0 : ( $a->$sorter > $b->$sorter ) ? 1 : -1;
-
+    
+    // A = B, tell usort not to do anything
+    if ( $a->$sorter == $b->$sorter )
+      return 0;
+    
+    //flip the return values depending on the sort direction
+    if ( $this->sort_dir == "desc" ) {
+      $up = -1;
+      $down = 1;
+    } else {
+      $up = 1;
+      $down = -1;
+    }
+    
+    if ( $a->$sorter < $b->$sorter )
+      return $down;
+      
+    if ( $a->$sorter > $b->$sorter )
+      return $up;
+        
   }
 
 
