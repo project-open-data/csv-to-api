@@ -26,7 +26,7 @@ Requirements
 Usage
 -----
 
-1. Copy `class.csv-to-api.inc.php` and `index.php` to your web server.
+1. Copy `class.csv-to-api.php` and `index.php` to your web server.
 2. Load a CSV file via the URL `index.php`, using the arguments below.
 
 Arguments
@@ -44,7 +44,7 @@ Example Usage
 -------------
 
 ### Get CSV as JSONP (default behavior)
-http://example.gov/csv-to-api/?source=https://explore.data.gov/download/7tag-iwnu/CSV
+http://example.gov/csv-to-api/?source=https://explore.data.gov/download/7tag-iwnu/CSV&source_format=csv
 
 ### Get results as XML
 
