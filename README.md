@@ -43,28 +43,30 @@ Arguments
 Example Usage
 -------------
 
+All examples use [data from REXUS](http://catalog.data.gov/dataset/real-estate-across-the-united-states-rexus-inventory-building), the primary tool used by the Public Building Service to track and manage the government's real property assets and to store inventory data, building data, customer data, and lease information.
+
 ### Get CSV as JSONP (default behavior)
-http://example.gov/csv-to-api/?source=https://explore.data.gov/download/7tag-iwnu/CSV&source_format=csv
+http://example.gov/csv-to-api/?source=http://www.gsa.gov/dg/data_gov_bldg_star.csv
 
 ### Get results as XML
 
-http://example.gov/csv-to-api/index.php?source=https://explore.data.gov/download/7tag-iwnu/CSV&source_format=csv&format=xml
+http://example.gov/csv-to-api/index.php?source=http://www.gsa.gov/dg/data_gov_bldg_star.csv&source_format=csv&format=xml
 
 ### Get results as JSONP
 
-http://example.gov/csv-to-api/index.php?source=https://explore.data.gov/download/7tag-iwnu/CSV&source_format=csv&format=json&callback=parse_results
+http://example.gov/csv-to-api/index.php?source=http://www.gsa.gov/dg/data_gov_bldg_star.csv&source_format=csv&format=json&callback=parse_results
 
 ### Get results as HTML
 
-http://example.gov/csv-to-api/index.php?source=https://explore.data.gov/download/7tag-iwnu/CSV&source_format=csv&format=html
+http://example.gov/csv-to-api/index.php?source=http://www.gsa.gov/dg/data_gov_bldg_star.csv&source_format=csv&format=html
 
 ### Sort by a field
 
-http://example.gov/csv-to-api/index.php?source=https://explore.data.gov/download/7tag-iwnu/CSV&source_format=csv&sort=Region
+http://example.gov/csv-to-api/index.php?source=http://www.gsa.gov/dg/data_gov_bldg_star.csv&source_format=csv&sort=Region
 
 ### Filter by a field
 
-http://example.gov/csv-to-api/index.php?source=https://explore.data.gov/download/7tag-iwnu/CSV&source_format=csv&Depth=5.00
+http://example.gov/csv-to-api/index.php?source=http://www.gsa.gov/dg/data_gov_bldg_star.csv&source_format=csv&Depth=5.00
 
 License
 -------
