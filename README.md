@@ -46,27 +46,27 @@ Example Usage
 All examples use [data from REXUS](http://catalog.data.gov/dataset/real-estate-across-the-united-states-rexus-inventory-building), the primary tool used by the Public Building Service to track and manage the government's real property assets and to store inventory data, building data, customer data, and lease information.
 
 ### Get CSV as JSONP (default behavior)
-http://example.gov/csv-to-api/?source=http://www.gsa.gov/dg/data_gov_bldg_star.csv
+http://labs.data.gov/csv-to-api/?source=http://www.gsa.gov/dg/data_gov_bldg_star.csv
 
 ### Get results as XML
 
-http://example.gov/csv-to-api/index.php?source=http://www.gsa.gov/dg/data_gov_bldg_star.csv&source_format=csv&format=xml
+http://labs.data.gov/csv-to-api/?source=http://www.gsa.gov/dg/data_gov_bldg_star.csv&format=xml
 
-### Get results as JSONP
+### Get results as JSONP with a specified callback
 
-http://example.gov/csv-to-api/index.php?source=http://www.gsa.gov/dg/data_gov_bldg_star.csv&source_format=csv&format=json&callback=parse_results
+http://labs.data.gov/csv-to-api/?source=http://www.gsa.gov/dg/data_gov_bldg_star.csv&format=json&callback=parse_results
 
 ### Get results as HTML
 
-http://example.gov/csv-to-api/index.php?source=http://www.gsa.gov/dg/data_gov_bldg_star.csv&source_format=csv&format=html
+http://labs.data.gov/csv-to-api/?source=http://www.gsa.gov/dg/data_gov_bldg_star.csv&format=html
 
 ### Sort by a field
 
-http://example.gov/csv-to-api/index.php?source=http://www.gsa.gov/dg/data_gov_bldg_star.csv&source_format=csv&sort=Region
+http://labs.data.gov/csv-to-api/?source=http://www.gsa.gov/dg/data_gov_bldg_star.csv&sort=Bldg+Zip
 
 ### Filter by a field
 
-http://example.gov/csv-to-api/index.php?source=http://www.gsa.gov/dg/data_gov_bldg_star.csv&source_format=csv&Depth=5.00
+http://labs.data.gov/csv-to-api/?source=http://www.gsa.gov/dg/data_gov_bldg_star.csv&Region+Code=11
 
 License
 -------
