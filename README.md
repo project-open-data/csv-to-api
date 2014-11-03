@@ -39,6 +39,7 @@ Arguments
 * `sort`: field to sort by (optional)
 * `sort_dir`: direction to sort, either `asc` or `desc` (default `asc`)
 * any field(s): may pass any fields as a key/value pair to filter by
+* `header_row`: whether the source CSV has a header row; if missing, it will automatically assign field names (`field_1`, `field_2`, etc.); either `n` or `y` (default `y`)
 
 Example Usage
 -------------
